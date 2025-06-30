@@ -1,13 +1,17 @@
 version: 0.2
-
 phases:
+  install:
+    commands:
+      - sudo apt-get update
+      - sudo apt-get install maven -y
+      - mvn --version
   build:
     commands:
-      - echo "Build phase complete. Nothing to build for static site."
-
+      - mvn clean install -DskipTests
+  post_build:
+    commands:
+      - echo "Transfer the artifact..."
+      - aws s3 cp target/*.jar s3://codepipeline-bucket-25/app.jar 
 artifacts:
   files:
-    - index.html
-    - scripts/*
-
-
+    - '**/*'
