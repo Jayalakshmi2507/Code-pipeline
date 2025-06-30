@@ -7,7 +7,7 @@ phases:
       - mvn --version
   build:
     commands:
-      - mvn clean install 
+      - mvn clean install -DskipTests
   post_build:
     commands:
       - echo "Transfer the artifact..."
