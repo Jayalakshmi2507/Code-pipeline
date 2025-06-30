@@ -1,4 +1,5 @@
 version: 0.2
+
 phases:
   install:
     commands:
@@ -7,11 +8,19 @@ phases:
       - mvn --version
   build:
     commands:
-      - mvn clean install -DskipTests
+      - mvn clean install -DskipTests -X || exit 1
   post_build:
     commands:
+      - echo "Listing artifacts..."
+      - ls -l target
       - echo "Transfer the artifact..."
-      - aws s3 cp target/*.jar s3://codepipeline-bucket-25/app.jar
+      - |
+        if ls target/*.jar 1> /dev/null 2>&1; then
+          aws s3 cp target/*.jar s3://codepipeline-bucket-25/app.jar
+        else
+          echo "❌ No .jar file found in target/ directory."
+        fi
 artifacts:
   files:
     - '**/*'
+
